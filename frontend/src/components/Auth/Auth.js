@@ -1,5 +1,9 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
+import axios from 'axios';
+import { useHistory } from "react-router";
 import "./style.scss";
+
+const ENDPOINT = 'http://localhost:10000/users'
 
 const AuthComponent = (props) => {
   const [userName, setUserName] = useState("");
@@ -7,6 +11,40 @@ const AuthComponent = (props) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [isLogin, setIsLogin] = useState(true);
+  const history = useHistory();
+
+  const onClick = useCallback(async () => {
+    if(!isLogin) {
+      const body = {
+        userName,
+        password,
+        displayName,
+      };
+      await axios.post(ENDPOINT, body).then((res) => {
+        if(res.status === 201) {
+          const {_id} = res.data;
+          console.log('register success!');
+          sessionStorage.setItem("_id", _id);
+          history.push('/home');
+          history.go(0);
+        }
+      });
+    } else {
+      const body = {
+        userName,
+        password,
+      };
+      await axios.get(ENDPOINT, body).then((res) => {
+        if(res.status === 200) {
+          const {_id} = res.data;
+          console.log('login success!');
+          sessionStorage.setItem("_id", _id);
+          history.push('/home');
+          history.go(0);
+        }
+      })
+    }
+  },[isLogin,userName,password,displayName,history])
 
   let authMode = "Login";
   let modeChange = "Not register yet?";
@@ -105,7 +143,7 @@ const AuthComponent = (props) => {
             >
               {modeChange}
             </p>
-            <button className="main-btn">{authMode}</button>
+            <button className="main-btn" onClick={onClick}>{authMode}</button>
           </div>
         </div>
       </div>

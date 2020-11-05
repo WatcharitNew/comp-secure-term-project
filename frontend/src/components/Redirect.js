@@ -7,7 +7,7 @@ function Redirect({ to }) {
   useEffect(() => {
     history.push(to);
     history.go(0);
-  }, []);
+  }, [history, to]);
 
   return <div></div>;
 }

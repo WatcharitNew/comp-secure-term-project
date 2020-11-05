@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import Redirect from "./Redirect";
 
 function AuthGaurd({ children }) {
-  const [userId, setUserId] = useState(sessionStorage.getItem("userId"));
+  const _id = sessionStorage.getItem("_id");
 
-  if (!userId) {
+  if (!_id) {
     return <Redirect to="/login" />;
   }
 
