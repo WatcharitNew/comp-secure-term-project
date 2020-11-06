@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto, LoginUserDto, HasUserDto } from './users.dto';
 import { User } from '../schemas/user.schema';
+import bcrypt = require('bcrypt');
 
 @Injectable()
 export class UsersService {
@@ -31,17 +32,24 @@ export class UsersService {
     if (result.hasDisplayName || result.hasUserName) {
       return result;
     }
+    const hashedPass = await bcrypt.hash(createUserDto.password, 10);
+    createUserDto.password = hashedPass;
     const createdUser = new this.userModel(createUserDto);
     createdUser.save();
     return { _id: createdUser._id };
   }
 
   async login(loginUserDto: LoginUserDto): Promise<{ _id: string }> {
-    const user = await this.userModel.findOne(loginUserDto).exec();
+    const { userName, password } = loginUserDto;
+    const user = await this.userModel.findOne({ userName }).exec();
     if (!user) {
       console.log('not found user');
       return { _id: null };
     }
-    return { _id: user._id };
+    if (await bcrypt.compare(password, user.password)) {
+      return { _id: user._id };
+    }
+    console.log('found user but pass fail');
+    return { _id: null };
   }
 }
