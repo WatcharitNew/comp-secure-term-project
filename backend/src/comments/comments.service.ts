@@ -33,9 +33,17 @@ export class CommentsService {
     updateCommentDto: UpdateCommentDto,
   ): Promise<any> {
     const { content } = updateCommentDto;
-    return await this.commentModel.updateOne(
+    return await this.commentModel.findOneAndUpdate(
       { _id: commentId },
       { content, updatedTime: new Date() },
+      { new: true },
     );
+  }
+
+  async delete(commentId: string): Promise<{ deletedCount: number }> {
+    const deletedComment = await this.commentModel.deleteOne({
+      _id: commentId,
+    });
+    return { deletedCount: deletedComment.deletedCount };
   }
 }
