@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  database:
+    image: "mongo:4.4"
+    container_name: database
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: comp-secure-term-project
+    ports:
+      - 27017-27019:27017-27019
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - db-data:/data/db
+  # will include all services later
+
+volumes:
+  db-data:
