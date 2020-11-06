@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { UsersModule } from './users/users.module';
       'mongodb://admin:password@localhost:27017/comp-secure-term-project',
     ),
     UsersModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
