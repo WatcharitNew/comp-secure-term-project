@@ -54,7 +54,7 @@
 .main-input {
   margin-left: 10px;
   margin-top: 10px;
-  width: 90%;
+  width: 93%;
   height: 20px;
 }
 
@@ -64,6 +64,15 @@
   justify-content: flex-end;
   align-items: center;
   flex-direction: column;
+}
+
+.error-msg {
+  margin-top: 10px;
+  font-size: 14px;
+  display: flex;
+  font-weight: bold;
+  margin-left: 10px;
+  color: red;
 }
 
 .main-change-auth {

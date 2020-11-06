@@ -11,10 +11,20 @@ const AuthComponent = (props) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [isLogin, setIsLogin] = useState(true);
+  const [showErr, setShowErr] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const history = useHistory();
 
   const onClick = useCallback(async () => {
     if(!isLogin) {
+      if(password.length < 8) {
+        setShowErr(true);
+        setErrorMsg('Password must >= 8 characters');
+      }
+      else if(confirmPassword !== password) {
+        setShowErr(true);
+        setErrorMsg('Confirm password is incorrect');
+      } else {
       const body = {
         userName,
         password,
@@ -22,29 +32,46 @@ const AuthComponent = (props) => {
       };
       await axios.post(ENDPOINT, body).then((res) => {
         if(res.status === 201) {
+          const {hasUserName, hasDisplayName} = res.data;
+          if(hasDisplayName) {
+            setShowErr(true);
+            setErrorMsg('This display name has alreay been taken');
+          }
+          else if(hasUserName) {
+            setShowErr(true);
+            setErrorMsg('This username has alreay been taken');
+          } 
+          else {
           const {_id} = res.data;
           console.log('register success!');
           sessionStorage.setItem("_id", _id);
           history.push('/home');
-          history.go(0);
+          history.go(0);}
         }
-      });
+      });}
     } else {
       const body = {
         userName,
         password,
       };
-      await axios.get(ENDPOINT, body).then((res) => {
+      console.log(body);
+      await axios.get(ENDPOINT, {
+        params: body
+      }).then((res) => {
         if(res.status === 200) {
           const {_id} = res.data;
-          console.log('login success!');
-          sessionStorage.setItem("_id", _id);
-          history.push('/home');
-          history.go(0);
+          if(_id === null) {
+            setShowErr(true);
+            setErrorMsg('Username or password is incorrect');
+          } else {
+            sessionStorage.setItem("_id", _id);
+            history.push('/home');
+            history.go(0);
+          }
         }
       })
     }
-  },[isLogin,userName,password,displayName,history])
+  },[isLogin,userName,password,confirmPassword,displayName,history])
 
   let authMode = "Login";
   let modeChange = "Not register yet?";
@@ -75,6 +102,8 @@ const AuthComponent = (props) => {
       />
     </>
   );
+  const errorArea = <div className='error-msg'>{errorMsg}</div>;
+  
   if (!isLogin) {
     authMode = "Register";
     modeChange = "Already have an account?";
@@ -102,7 +131,7 @@ const AuthComponent = (props) => {
           value={userName}
           placeholder="input your username"
         />
-        <div className="main-label">Password</div>
+        <div className="main-label">Password (length must &gt;= 8)</div>
         <input
           type="password"
           className="main-input"
@@ -136,10 +165,12 @@ const AuthComponent = (props) => {
           <div className="main-header">SECURE BLOG</div>
           <div className="main-auth-label">{authMode}</div>
           {authInput}
+          {showErr && errorArea}
           <div className="main-btn-area">
             <p
               className="main-change-auth"
-              onClick={() => setIsLogin(!isLogin)}
+              onClick={() => {setIsLogin(!isLogin);
+              setShowErr(false);}}
             >
               {modeChange}
             </p>
