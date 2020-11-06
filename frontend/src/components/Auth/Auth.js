@@ -42,9 +42,10 @@ const AuthComponent = (props) => {
             setErrorMsg('This username has alreay been taken');
           } 
           else {
-          const {_id} = res.data;
+          const {_id, displayName} = res.data;
           console.log('register success!');
           sessionStorage.setItem("_id", _id);
+          sessionStorage.setItem("displayName", displayName);
           history.push('/home');
           history.go(0);}
         }
@@ -59,12 +60,13 @@ const AuthComponent = (props) => {
         params: body
       }).then((res) => {
         if(res.status === 200) {
-          const {_id} = res.data;
+          const {_id, displayName} = res.data;
           if(_id === null) {
             setShowErr(true);
             setErrorMsg('Username or password is incorrect');
           } else {
             sessionStorage.setItem("_id", _id);
+            sessionStorage.setItem("displayName", displayName);
             history.push('/home');
             history.go(0);
           }

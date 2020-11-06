@@ -26,7 +26,7 @@ export class UsersService {
 
   async create(
     createUserDto: CreateUserDto,
-  ): Promise<{ _id: string } | HasUserDto> {
+  ): Promise<{ _id: string, displayName: string } | HasUserDto> {
     const { userName, displayName } = createUserDto;
     const result = await this.hasUser(userName, displayName);
     if (result.hasDisplayName || result.hasUserName) {
@@ -36,20 +36,20 @@ export class UsersService {
     createUserDto.password = hashedPass;
     const createdUser = new this.userModel(createUserDto);
     createdUser.save();
-    return { _id: createdUser._id };
+    return { _id: createdUser._id,  displayName};
   }
 
-  async login(loginUserDto: LoginUserDto): Promise<{ _id: string }> {
+  async login(loginUserDto: LoginUserDto): Promise<{ _id: string, displayName: string }> {
     const { userName, password } = loginUserDto;
     const user = await this.userModel.findOne({ userName }).exec();
     if (!user) {
       console.log('not found user');
-      return { _id: null };
+      return { _id: null, displayName: null };
     }
     if (await bcrypt.compare(password, user.password)) {
-      return { _id: user._id };
+      return { _id: user._id, displayName: user.displayName };
     }
     console.log('found user but pass fail');
-    return { _id: null };
+    return { _id: null, displayName: null };
   }
 }

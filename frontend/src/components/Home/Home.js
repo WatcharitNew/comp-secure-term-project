@@ -1,5 +1,6 @@
 import React from "react";
 import "./style.scss";
+import { useHistory } from "react-router";
 
 const HomeComponent = (props) => {
   const mockData = {
@@ -102,15 +103,29 @@ const HomeComponent = (props) => {
     );
   })
 
+  const displayName = sessionStorage.getItem("displayName");
+
+  const history = useHistory();
+  const handleLogOut = () => {
+    sessionStorage.removeItem("_id");
+    sessionStorage.removeItem("displayName");
+    history.push('/login');
+    history.go(0);
+  }
+
   return (
   <div className="background">
+    <button className="logOut" onClick={handleLogOut}>Log Out</button>
     <div className="mainBox">
       <div className="posts">
-        <input 
-          className="addPost"
-          placeholder="Add Post..."
-          onKeyPress={handleAddPost}
-        />
+        <div className="newPost">
+          <span className="displayName">{displayName} : </span>
+          <input 
+            className="addPost"
+            placeholder="Add Post..."
+            onKeyPress={handleAddPost}
+          />
+        </div>
         {postsComponent}
       </div>
     </div>

@@ -95,9 +95,34 @@
 }
 
 .addPost {
+  background: none;
+  border: none;
+  outline: none;
+}
+
+.newPost {
   margin-top: 8px;
   background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.3);
   border-radius: 8px;
   padding: 4px 4px 4px 16px;
+}
+
+.displayName {
+  font-size: 20px;
+  font-weight: bold;
+  color: #385898;
+}
+
+.logOut {
+  position: absolute;
+  left: 3vh;
+  top: 3vh;
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  font-weight: bold;
+  outline: none;
+  cursor: pointer;
 }
