@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateUserDto, LoginUserDto, HasUserDto } from './users.dto';
+import { CreateUserDto, HasUserDto } from './users.dto';
 import { User } from '../schemas/user.schema';
 import bcrypt = require('bcrypt');
 
@@ -39,17 +39,8 @@ export class UsersService {
     return { _id: createdUser._id,  displayName};
   }
 
-  async login(loginUserDto: LoginUserDto): Promise<{ _id: string, displayName: string }> {
-    const { userName, password } = loginUserDto;
-    const user = await this.userModel.findOne({ userName }).exec();
-    if (!user) {
-      console.log('not found user');
-      return { _id: null, displayName: null };
-    }
-    if (await bcrypt.compare(password, user.password)) {
-      return { _id: user._id, displayName: user.displayName };
-    }
-    console.log('found user but pass fail');
-    return { _id: null, displayName: null };
+  async getUserByUsername(userName: string) {
+    const ret = await this.userModel.findOne({ userName }).exec();
+    return ret;
   }
 }

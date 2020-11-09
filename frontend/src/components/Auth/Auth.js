@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useHistory } from "react-router";
 import "./style.scss";
 
-const ENDPOINT = 'http://localhost:10000/users'
+const ENDPOINT = process.env.REACT_APP_BACKEND
 
 const AuthComponent = (props) => {
   const [userName, setUserName] = useState("");
@@ -30,7 +30,7 @@ const AuthComponent = (props) => {
         password,
         displayName,
       };
-      await axios.post(ENDPOINT, body).then((res) => {
+      await axios.post(`${ENDPOINT}/auth/login`, body).then((res) => {
         if(res.status === 201) {
           const {hasUserName, hasDisplayName} = res.data;
           if(hasDisplayName) {
@@ -52,19 +52,17 @@ const AuthComponent = (props) => {
       });}
     } else {
       const body = {
-        userName,
+        username: userName,
         password,
       };
-      console.log(body);
-      await axios.get(ENDPOINT, {
-        params: body
-      }).then((res) => {
-        if(res.status === 200) {
-          const {_id, displayName} = res.data;
+      await axios.post(`${ENDPOINT}/auth/login`, body).then((res) => {
+        if(res.status===201) {
+          const {_id, displayName, access_token} = res.data;
           if(_id === null) {
             setShowErr(true);
             setErrorMsg('Username or password is incorrect');
           } else {
+            sessionStorage.setItem("access_token", access_token);
             sessionStorage.setItem("_id", _id);
             sessionStorage.setItem("displayName", displayName);
             history.push('/home');
