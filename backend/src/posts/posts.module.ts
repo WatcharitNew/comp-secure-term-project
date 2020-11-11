@@ -5,6 +5,7 @@ import { PostsService } from './posts.service';
 import { Post, PostSchema } from '../schemas/post.schema';
 import { Comment, CommentSchema } from '../schemas/comment.schema';
 import { PassportModule } from '@nestjs/passport';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { PassportModule } from '@nestjs/passport';
       useFactory: () => ({
           defaultStrategy: 'jwt',
       }),
-  }),
+    }),
+    UsersModule,
   ],
   controllers: [PostsController],
   providers: [PostsService],

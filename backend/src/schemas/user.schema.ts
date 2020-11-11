@@ -11,6 +11,9 @@ export class User extends Document {
 
   @Prop()
   displayName: string;
+
+  @Prop()
+  isAdmin: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -48,4 +48,9 @@ export class PostsService {
       deletedCommentsCount: deletedComments.deletedCount,
     };
   }
+
+  async getPostUserIdByPostId (postId: number): Promise<string> {
+    const post = await this.postModel.findOne({ _id: postId }).exec();
+    return post.userId;
+  }
 }

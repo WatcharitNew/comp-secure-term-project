@@ -34,13 +34,26 @@ export class UsersService {
     }
     const hashedPass = await bcrypt.hash(createUserDto.password, 10);
     createUserDto.password = hashedPass;
+    createUserDto.isAdmin = false;
     const createdUser = new this.userModel(createUserDto);
     createdUser.save();
     return { _id: createdUser._id,  displayName};
   }
 
   async getUserByUsername(userName: string) {
-    const ret = await this.userModel.findOne({ userName }).exec();
-    return ret;
+    const user = await this.userModel.findOne({ userName }).exec();
+    return user;
+  }
+
+  async isAdmin(userId: string): Promise<boolean> {
+    const user = await this.userModel.findOne({ _id: userId }).exec();
+    return user.isAdmin;
+  }
+
+  async promote(userId: string) {
+    return await this.userModel.findOneAndUpdate(
+      { _id: userId },
+      { isAdmin: true }
+    );
   }
 }

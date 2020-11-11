@@ -30,7 +30,7 @@ const AuthComponent = (props) => {
         password,
         displayName,
       };
-      await axios.post(`${ENDPOINT}/auth/login`, body).then((res) => {
+      await axios.post(`${ENDPOINT}/users`, body).then((res) => {
         if(res.status === 201) {
           const {hasUserName, hasDisplayName} = res.data;
           if(hasDisplayName) {
