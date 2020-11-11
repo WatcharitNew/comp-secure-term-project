@@ -9,6 +9,7 @@ import { LoadUser } from 'src/decorator/user.decorator';
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
+  @UseGuards(AuthGuard())
   @Get()
   async get() {
     return await this.postsService.get();

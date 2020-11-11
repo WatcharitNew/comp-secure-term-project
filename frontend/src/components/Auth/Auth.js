@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useHistory } from "react-router";
 import "./style.scss";
 
-const ENDPOINT = process.env.REACT_APP_BACKEND
+const ENDPOINT = process.env.REACT_APP_BACKEND;
 
 const AuthComponent = (props) => {
   const [userName, setUserName] = useState("");
@@ -42,10 +42,11 @@ const AuthComponent = (props) => {
             setErrorMsg('This username has alreay been taken');
           } 
           else {
-          const {_id, displayName} = res.data;
+          const {_id, displayName, access_token} = res.data;
           console.log('register success!');
           sessionStorage.setItem("_id", _id);
           sessionStorage.setItem("displayName", displayName);
+          sessionStorage.setItem("access_token", access_token);
           history.push('/home');
           history.go(0);}
         }

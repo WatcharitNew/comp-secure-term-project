@@ -4,6 +4,7 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { User, UserSchema } from '../schemas/user.schema';
 import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -13,6 +14,11 @@ import { PassportModule } from '@nestjs/passport';
           defaultStrategy: 'jwt',
       }),
     }),
+    JwtModule.registerAsync({
+      useFactory: () => ({
+          secret: `${process.env.JWT_SECRET}`,
+      }),
+  }),
   ],
   controllers: [UsersController],
   providers: [UsersService],

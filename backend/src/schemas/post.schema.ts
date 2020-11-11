@@ -14,6 +14,9 @@ export class Post extends Document {
 
   @Prop()
   userId: string;
+
+  @Prop()
+  userName: string;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

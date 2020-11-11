@@ -17,6 +17,9 @@ export class Comment extends Document {
 
   @Prop()
   postId: string;
+
+  @Prop()
+  userName: string;
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);

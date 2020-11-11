@@ -4,12 +4,14 @@ import { Model } from 'mongoose';
 import { CreatePostDto, UpdatePostDto } from './posts.dto';
 import { Post } from '../schemas/post.schema';
 import { Comment } from '../schemas/comment.schema';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectModel(Post.name) private readonly postModel: Model<Post>,
     @InjectModel(Comment.name) private readonly commentModel: Model<Comment>,
+    private readonly userService: UsersService,
   ) {}
 
   async get(): Promise<Post[]> {
@@ -23,6 +25,7 @@ export class PostsService {
       userId,
       createdTime: new Date(),
       updatedTime: new Date(),
+      userName: await this.userService.getUserNameByUserId(userId),
     };
     const createdPost = new this.postModel(postToCreate);
     createdPost.save();

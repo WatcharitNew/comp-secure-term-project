@@ -1,47 +1,22 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import "./style.scss";
 import { useHistory } from "react-router";
+import axios from 'axios';
 
-const HomeComponent = (props) => {
-  const mockData = {
-    posts: [
-      {
-        userName: 'Inuyama Shibata',
-        text: 'I\'m shiba inu',
-        createdTime: new Date(),
-        comments: [
-          {
-            userName: 'Neramit 456',
-            createdTime: new Date(),
-            text: 'So secure',
-          },
-          {
-            userName: 'Tiger 789',
-            createdTime: new Date(),
-            text: 'Wow',
-          },
-        ],
-      },
-      {
-        userName: 'Sumet 123',
-        text: 'Test',
-        createdTime: new Date(),
-        comments: [],
-      },
-      {
-        userName: 'Sumet 123',
-        text: 'Test',
-        createdTime: new Date(),
-        comments: [],
-      },
-      {
-        userName: 'Sumet 123',
-        text: 'Test',
-        createdTime: new Date(),
-        comments: [],
-      },
-    ]
-  }
+const ENDPOINT = process.env.REACT_APP_BACKEND;
+
+const HomeComponent = () => {
+  const [posts, setPosts] = useState([]);
+
+  axios.defaults.headers.common["Authorization"] = "Bearer " + sessionStorage.getItem("access_token");
+  useEffect(() => {
+    axios.get(`${ENDPOINT}/posts`).then((res) => {
+      console.log(res.status);
+      if(res.status===200) {
+        setPosts(res.data);
+      }
+    })
+  });
 
   const handleAddComment = (event) => {
     if(event.key === 'Enter'){
@@ -56,7 +31,6 @@ const HomeComponent = (props) => {
   }
 
 
-  const {posts} = mockData;
   const postsComponent = posts.map((post) => {
     const formattedDate = post.createdTime.toLocaleString("en-GB", {
       day: "numeric",
@@ -65,6 +39,7 @@ const HomeComponent = (props) => {
       hour: "numeric",
       minute: "2-digit"
     });
+    /*
     const commentsComponent = post.comments.map((comment) => {
       const formattedDate = comment.createdTime.toLocaleString("en-GB", {
         day: "numeric",
@@ -79,10 +54,12 @@ const HomeComponent = (props) => {
             {comment.userName} 
             <span className="commentDate">{formattedDate}</span>
           </span>
-          <span className="commentText">{comment.text}</span>
+          <span className="commentText">{comment.content}</span>
         </div>
       );
     })
+    */
+    const commentsComponent = [];
 
     commentsComponent.push((
       <input 
@@ -97,7 +74,7 @@ const HomeComponent = (props) => {
           {post.userName}
           <span className="postTime">{formattedDate}</span>
         </span>
-        <span className="postText">{post.text}</span>
+        <span className="postText">{post.content}</span>
         <div className="comments">{commentsComponent}</div>
       </div>
     );

@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto, HasUserDto } from './users.dto';
 import { User } from '../schemas/user.schema';
 import bcrypt = require('bcrypt');
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async hasUser(userName: string, displayName: string): Promise<HasUserDto> {
@@ -26,7 +28,7 @@ export class UsersService {
 
   async create(
     createUserDto: CreateUserDto,
-  ): Promise<{ _id: string, displayName: string } | HasUserDto> {
+  ): Promise<{ _id: string, displayName: string, access_token: string } | HasUserDto> {
     const { userName, displayName } = createUserDto;
     const result = await this.hasUser(userName, displayName);
     if (result.hasDisplayName || result.hasUserName) {
@@ -37,23 +39,34 @@ export class UsersService {
     createUserDto.isAdmin = false;
     const createdUser = new this.userModel(createUserDto);
     createdUser.save();
-    return { _id: createdUser._id,  displayName};
+    
+    const payload = { sub: createdUser._id, userName };
+    const access_token = this.jwtService.sign(payload);
+    return { _id: createdUser._id,  displayName, access_token};
   }
 
   async getUserByUsername(userName: string) {
     const user = await this.userModel.findOne({ userName }).exec();
+    if(!user) throw new BadRequestException('Not found any User');
     return user;
   }
 
   async isAdmin(userId: string): Promise<boolean> {
     const user = await this.userModel.findOne({ _id: userId }).exec();
+    if(!user) throw new BadRequestException('Not found any User');
     return user.isAdmin;
   }
 
   async promote(userId: string) {
-    return await this.userModel.findOneAndUpdate(
+    return this.userModel.findOneAndUpdate(
       { _id: userId },
       { isAdmin: true }
     );
+  }
+
+  async getUserNameByUserId(userId: string): Promise<string> {
+    const user = await this.userModel.findOne({ _id: userId }).exec();
+    if(!user) throw new BadRequestException('Not found any User');
+    return user.userName;
   }
 }
