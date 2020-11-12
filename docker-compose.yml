@@ -21,6 +21,9 @@ services:
       - 8080:8080
     volumes:
       - ./backend/src:/home/node/app/src
+    environment:
+      MONGO_URI: mongodb://admin:password@database:27017/comp-secure-term-project
+      JWT_SECRET: development ONLY
 
   # will include all services later
 
