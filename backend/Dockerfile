@@ -1,0 +1,23 @@
+FROM node:14-slim
+
+USER node
+
+ARG PORT=8080
+
+ENV PORT=${PORT}
+ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
+ENV PATH=$PATH:/home/node/.npm-global/bin
+
+WORKDIR /home/node
+
+COPY --chown=node package.json yarn.lock ./
+
+RUN yarn install
+
+COPY . .
+
+RUN yarn build
+
+EXPOSE ${PORT}
+
+CMD [ "yarn", "start:prod" ]
