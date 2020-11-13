@@ -41,7 +41,7 @@ export class UsersService {
     createdUser.save();
     
     const payload = { sub: createdUser._id, userName };
-    const access_token = this.jwtService.sign(payload);
+    const access_token = this.jwtService.sign(payload, {algorithm: 'RS256', secret: process.env.JWT_PRIVATE_KEY});
     return { _id: createdUser._id,  displayName, access_token};
   }
 

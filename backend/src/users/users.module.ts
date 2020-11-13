@@ -4,7 +4,7 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { User, UserSchema } from '../schemas/user.schema';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -15,9 +15,16 @@ import { JwtModule } from '@nestjs/jwt';
       }),
     }),
     JwtModule.registerAsync({
-      useFactory: () => ({
-          secret: `${process.env.JWT_SECRET}`,
-      }),
+      useFactory: async () => {
+        const options: JwtModuleOptions = {
+            privateKey: process.env.JWT_PRIVATE_KEY,
+            publicKey: process.env.JWT_PUBLIC_KEY,
+            signOptions: {
+                algorithm: 'RS256',
+            }
+        };
+        return options;
+      },
   }),
   ],
   controllers: [UsersController],

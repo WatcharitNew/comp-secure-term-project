@@ -3,7 +3,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { LocalStrategy } from './local.strategy';
 
@@ -15,9 +15,16 @@ import { LocalStrategy } from './local.strategy';
             }),
         }),
         JwtModule.registerAsync({
-            useFactory: () => ({
-                secret: `${process.env.JWT_SECRET}`,
-            }),
+            useFactory: async () => {
+                const options: JwtModuleOptions = {
+                    privateKey: process.env.JWT_PRIVATE_KEY,
+                    publicKey: process.env.JWT_PUBLIC_KEY,
+                    signOptions: {
+                        algorithm: 'RS256',
+                    }
+                };
+                return options;
+            }
         }),
         UsersModule,
     ],

@@ -86,6 +86,7 @@ const HomeComponent = () => {
   const handleLogOut = () => {
     sessionStorage.removeItem("_id");
     sessionStorage.removeItem("displayName");
+    sessionStorage.removeItem("access_token");
     history.push('/login');
     history.go(0);
   }
