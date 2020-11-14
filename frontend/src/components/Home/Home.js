@@ -8,6 +8,7 @@ const ENDPOINT = process.env.REACT_APP_BACKEND;
 const HomeComponent = () => {
   const [posts, setPosts] = useState([]);
   const isAdmin = sessionStorage.getItem("isAdmin");
+  const userId = sessionStorage.getItem("_id");
 
   axios.defaults.headers.common["Authorization"] =
     "Bearer " + sessionStorage.getItem("access_token");
@@ -52,13 +53,21 @@ const HomeComponent = () => {
 
   const handleAddComment = (event) => {
     if (event.key === "Enter") {
-      console.log(event.target.value);
+      axios
+        .post(`${ENDPOINT}/comments`, {
+          userId,
+          content: event.target.value,
+          postId: event.target.getAttribute("post-id"),
+        })
+        .then(window.location.reload(false));
     }
   };
 
   const handleAddPost = (event) => {
     if (event.key === "Enter") {
-      console.log(event.target.value);
+      axios
+        .post(`${ENDPOINT}/posts`, { userId, content: event.target.value })
+        .then(window.location.reload(false));
     }
   };
 
@@ -93,6 +102,7 @@ const HomeComponent = () => {
     commentsComponent.push(
       <input
         key={`add-comment-${post._id}`}
+        post-id={post._id}
         className="addComment"
         placeholder="Add Comment..."
         onKeyPress={handleAddComment}
