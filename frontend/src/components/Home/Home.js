@@ -95,7 +95,7 @@ const HomeComponent = () => {
           key={comment._id}
           comment={comment}
           formattedDate={formattedDate}
-          canModify={isAdmin || comment.userId === userId}
+          canModify={isAdmin === "true" || comment.userId === userId}
         />
       );
     });
@@ -115,7 +115,7 @@ const HomeComponent = () => {
         post={post}
         formattedDate={formattedDate}
         commentsComponent={commentsComponent}
-        canModify={isAdmin || post.userId === userId}
+        canModify={isAdmin === "true" || post.userId === userId}
       />
     );
   });
