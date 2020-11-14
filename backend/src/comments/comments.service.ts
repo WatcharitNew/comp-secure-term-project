@@ -15,7 +15,7 @@ export class CommentsService {
   async get(): Promise<Comment[]> {
     return await this.commentModel.find(
       {},
-      ['_id', 'content', 'userName', 'createdTime', 'postId'],
+      ['_id', 'content', 'userName', 'userId', 'createdTime', 'postId'],
       {
         sort: {
           createdTime: 1,

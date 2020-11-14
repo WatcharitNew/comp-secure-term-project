@@ -17,7 +17,7 @@ export class PostsService {
   async get(): Promise<any[]> {
     return await this.postModel.find(
       {},
-      ['_id', 'content', 'userName', 'createdTime'],
+      ['_id', 'content', 'userName', 'userId', 'createdTime'],
       {
         sort: {
           createdTime: -1,
