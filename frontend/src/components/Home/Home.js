@@ -92,6 +92,7 @@ const HomeComponent = () => {
 
     commentsComponent.push(
       <input
+        key={`add-comment-${post._id}`}
         className="addComment"
         placeholder="Add Comment..."
         onKeyPress={handleAddComment}
