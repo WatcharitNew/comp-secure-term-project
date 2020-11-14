@@ -14,8 +14,16 @@ export class PostsService {
     private readonly userService: UsersService,
   ) {}
 
-  async get(): Promise<Post[]> {
-    return await this.postModel.find();
+  async get(): Promise<any[]> {
+    return await this.postModel.find(
+      {},
+      ['_id', 'content', 'userName', 'createdTime'],
+      {
+        sort: {
+          createdTime: -1,
+        },
+      },
+    );
   }
 
   async create(createPostDto: CreatePostDto): Promise<{ _id: string }> {
@@ -52,7 +60,7 @@ export class PostsService {
     };
   }
 
-  async getPostUserIdByPostId (postId: number): Promise<string> {
+  async getPostUserIdByPostId(postId: number): Promise<string> {
     const post = await this.postModel.findOne({ _id: postId }).exec();
     return post.userId;
   }
