@@ -57,12 +57,14 @@ export class UsersService {
     return user.isAdmin;
   }
 
+  /*
   async promote(userId: string) {
     return this.userModel.findOneAndUpdate(
       { _id: userId },
       { isAdmin: true }
     );
   }
+  */
 
   async getUserNameByUserId(userId: string): Promise<string> {
     const user = await this.userModel.findOne({ _id: userId }).exec();

@@ -7,6 +7,7 @@ const ENDPOINT = process.env.REACT_APP_BACKEND;
 
 const HomeComponent = () => {
   const [posts, setPosts] = useState([]);
+  const isAdmin = sessionStorage.getItem("isAdmin");
 
   axios.defaults.headers.common["Authorization"] = "Bearer " + sessionStorage.getItem("access_token");
   useEffect(() => {
