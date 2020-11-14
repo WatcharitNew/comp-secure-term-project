@@ -57,4 +57,9 @@ export class CommentsService {
     });
     return { deletedCount: deletedComment.deletedCount };
   }
+
+  async getCommentUserIdByCommentId(commentId: string): Promise<string> {
+    const comment = await this.commentModel.findOne({ _id: commentId }).exec();
+    return comment.userId;
+  }
 }
