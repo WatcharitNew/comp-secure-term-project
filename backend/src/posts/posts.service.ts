@@ -60,7 +60,7 @@ export class PostsService {
     };
   }
 
-  async getPostUserIdByPostId(postId: number): Promise<string> {
+  async getPostUserIdByPostId(postId: string): Promise<string> {
     const post = await this.postModel.findOne({ _id: postId }).exec();
     return post.userId;
   }
