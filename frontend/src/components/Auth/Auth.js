@@ -16,7 +16,7 @@ const AuthComponent = (props) => {
   const history = useHistory();
 
   const onClick = useCallback(async () => {
-    if(!isLogin) {
+    if(!isLogin) { // register
       if(password.length < 8) {
         setShowErr(true);
         setErrorMsg('Password must >= 8 characters');
@@ -47,6 +47,7 @@ const AuthComponent = (props) => {
           sessionStorage.setItem("_id", _id);
           sessionStorage.setItem("displayName", displayName);
           sessionStorage.setItem("access_token", access_token);
+          sessionStorage.setItem("isAdmin", false);
           history.push('/home');
           history.go(0);}
         }
@@ -58,7 +59,7 @@ const AuthComponent = (props) => {
       };
       await axios.post(`${ENDPOINT}/auth/login`, body).then((res) => {
         if(res.status===201) {
-          const {_id, displayName, access_token} = res.data;
+          const {_id, displayName, access_token, isAdmin} = res.data;
           if(_id === null) {
             setShowErr(true);
             setErrorMsg('Username or password is incorrect');
@@ -66,6 +67,7 @@ const AuthComponent = (props) => {
             sessionStorage.setItem("access_token", access_token);
             sessionStorage.setItem("_id", _id);
             sessionStorage.setItem("displayName", displayName);
+            sessionStorage.setItem("isAdmin", isAdmin);
             history.push('/home');
             history.go(0);
           }

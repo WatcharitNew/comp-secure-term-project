@@ -31,6 +31,7 @@ export class AuthService {
             access_token: this.jwtService.sign(payload, {algorithm: 'RS256', secret: process.env.JWT_PRIVATE_KEY}),
             _id: user._id,
             displayName: user.displayName,
+            isAdmin: await this.userService.isAdmin(user._id)
         };
     }
 }
