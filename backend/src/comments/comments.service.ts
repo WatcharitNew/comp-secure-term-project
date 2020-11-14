@@ -3,15 +3,25 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateCommentDto, UpdateCommentDto } from './comments.dto';
 import { Comment } from '../schemas/comment.schema';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class CommentsService {
   constructor(
     @InjectModel(Comment.name) private readonly commentModel: Model<Comment>,
+    private readonly userService: UsersService,
   ) {}
 
   async get(): Promise<Comment[]> {
-    return await this.commentModel.find();
+    return await this.commentModel.find(
+      {},
+      ['_id', 'content', 'userName', 'createdTime', 'postId'],
+      {
+        sort: {
+          createdTime: 1,
+        },
+      },
+    );
   }
 
   async create(createCommentDto: CreateCommentDto): Promise<{ _id: string }> {
@@ -22,6 +32,7 @@ export class CommentsService {
       postId,
       createdTime: new Date(),
       updatedTime: new Date(),
+      userName: await this.userService.getUserNameByUserId(userId),
     };
     const createdComment = new this.commentModel(commentToCreate);
     createdComment.save();
