@@ -10,37 +10,43 @@ const HomeComponent = () => {
 
   axios.defaults.headers.common["Authorization"] =
     "Bearer " + sessionStorage.getItem("access_token");
-  useEffect(async () => {
+  useEffect(() => {
     let posts, comments;
-    const posts_res = await axios.get(`${ENDPOINT}/posts`);
-    if (posts_res.status === 200) {
-      posts = posts_res.data;
-    } else {
-      console.log(`Error: ${ENDPOINT}/posts return status ${posts_res.status}`);
-      return;
-    }
-    const comments_res = await axios.get(`${ENDPOINT}/comments`);
-    if (comments_res.status === 200) {
-      comments = comments_res.data;
-    } else {
-      console.log(
-        `Error: ${ENDPOINT}/posts return status ${comments_res.status}`
-      );
-      return;
-    }
-    let postIdToIdx = {};
-    posts.forEach((post, idx) => {
-      const { _id } = post;
-      postIdToIdx[_id] = idx;
-      posts[idx].comments = [];
-    });
-    comments.forEach((comment) => {
-      const { postId } = comment;
-      if (postIdToIdx[postId] !== undefined) {
-        posts[postIdToIdx[postId]].comments.push(comment);
+    const fetchData = async () => {
+      const posts_res = await axios.get(`${ENDPOINT}/posts`);
+      if (posts_res.status === 200) {
+        posts = posts_res.data;
+      } else {
+        console.log(
+          `Error: ${ENDPOINT}/posts return status ${posts_res.status}`
+        );
+        return;
       }
+      const comments_res = await axios.get(`${ENDPOINT}/comments`);
+      if (comments_res.status === 200) {
+        comments = comments_res.data;
+      } else {
+        console.log(
+          `Error: ${ENDPOINT}/posts return status ${comments_res.status}`
+        );
+        return;
+      }
+    };
+    fetchData().then(() => {
+      let postIdToIdx = {};
+      posts.forEach((post, idx) => {
+        const { _id } = post;
+        postIdToIdx[_id] = idx;
+        posts[idx].comments = [];
+      });
+      comments.forEach((comment) => {
+        const { postId } = comment;
+        if (postIdToIdx[postId] !== undefined) {
+          posts[postIdToIdx[postId]].comments.push(comment);
+        }
+      });
+      setPosts(posts);
     });
-    setPosts(posts);
   }, []);
 
   const handleAddComment = (event) => {
@@ -73,7 +79,7 @@ const HomeComponent = () => {
         minute: "2-digit",
       });
       return (
-        <div className="comment">
+        <div className="comment" key={comment._id}>
           <span className="commentUserName">
             {comment.userName}
             <span className="commentDate">{formattedDate}</span>
@@ -91,7 +97,7 @@ const HomeComponent = () => {
       />
     );
     return (
-      <div className="post">
+      <div className="post" key={post._id}>
         <span className="postUserName">
           {post.userName}
           <span className="postTime">{formattedDate}</span>
