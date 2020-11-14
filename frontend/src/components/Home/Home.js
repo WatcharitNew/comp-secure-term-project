@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./style.scss";
 import { useHistory } from "react-router";
 import axios from "axios";
+import edit_icon from "../../img/edit.png";
+import delete_icon from "../../img/delete.png";
 
 const ENDPOINT = process.env.REACT_APP_BACKEND;
 
@@ -52,7 +54,7 @@ const HomeComponent = () => {
   }, []);
 
   const handleAddComment = (event) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && event.target.value !== "") {
       axios
         .post(`${ENDPOINT}/comments`, {
           userId,
@@ -64,7 +66,7 @@ const HomeComponent = () => {
   };
 
   const handleAddPost = (event) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && event.target.value !== "") {
       axios
         .post(`${ENDPOINT}/posts`, { userId, content: event.target.value })
         .then(window.location.reload(false));
@@ -89,13 +91,12 @@ const HomeComponent = () => {
         minute: "2-digit",
       });
       return (
-        <div className="comment" key={comment._id}>
-          <span className="commentUserName">
-            {comment.userName}
-            <span className="commentDate">{formattedDate}</span>
-          </span>
-          <span className="commentText">{comment.content}</span>
-        </div>
+        <CommentComponent
+          key={comment._id}
+          comment={comment}
+          formattedDate={formattedDate}
+          canModify={isAdmin || comment.userId === userId}
+        />
       );
     });
 
@@ -109,14 +110,13 @@ const HomeComponent = () => {
       />
     );
     return (
-      <div className="post" key={post._id}>
-        <span className="postUserName">
-          {post.userName}
-          <span className="postTime">{formattedDate}</span>
-        </span>
-        <span className="postText">{post.content}</span>
-        <div className="comments">{commentsComponent}</div>
-      </div>
+      <PostComponent
+        key={post._id}
+        post={post}
+        formattedDate={formattedDate}
+        commentsComponent={commentsComponent}
+        canModify={isAdmin || post.userId === userId}
+      />
     );
   });
 
@@ -149,6 +149,120 @@ const HomeComponent = () => {
           {postsComponent}
         </div>
       </div>
+    </div>
+  );
+};
+
+const PostComponent = (props) => {
+  const [isEditing, setEditing] = useState(false);
+  const { post, formattedDate, commentsComponent, canModify } = props;
+  const handleEditPost = (event) => {
+    if (event.key === "Enter" && event.target.value !== "") {
+      axios
+        .post(`${ENDPOINT}/posts/${event.target.getAttribute("post-id")}`, {
+          content: event.target.value,
+        })
+        .then(window.location.reload(false));
+    }
+  };
+  const handleDeletePost = (event) => {
+    axios
+      .delete(`${ENDPOINT}/posts/${event.target.getAttribute("post-id")}`)
+      .then(window.location.reload(false));
+  };
+  return (
+    <div className="post">
+      <span className="postUserName">
+        {post.userName}
+        <span className="postTime">{formattedDate}</span>
+      </span>
+      {isEditing ? (
+        <input
+          post-id={post._id}
+          className="addPost"
+          placeholder="Edit Post..."
+          defaultValue={post.content}
+          onKeyPress={handleEditPost}
+        />
+      ) : (
+        <span className="postText">{post.content}</span>
+      )}
+      <div className="comments">{commentsComponent}</div>
+      {canModify && (
+        <img
+          src={edit_icon}
+          alt="edit"
+          className="editButton"
+          onClick={() => setEditing(true)}
+        />
+      )}
+      {canModify && (
+        <img
+          src={delete_icon}
+          alt="delete"
+          className="deleteButton"
+          post-id={post._id}
+          onClick={handleDeletePost}
+        />
+      )}
+    </div>
+  );
+};
+
+const CommentComponent = (props) => {
+  const [isEditing, setEditing] = useState(false);
+  const { comment, formattedDate, canModify } = props;
+  const handleEditComment = (event) => {
+    if (event.key === "Enter" && event.target.value !== "") {
+      axios
+        .post(
+          `${ENDPOINT}/comments/${event.target.getAttribute("comment-id")}`,
+          {
+            content: event.target.value,
+          }
+        )
+        .then(window.location.reload(false));
+    }
+  };
+  const handleDeleteComment = (event) => {
+    axios
+      .delete(`${ENDPOINT}/comments/${event.target.getAttribute("comment-id")}`)
+      .then(window.location.reload(false));
+  };
+  return (
+    <div className="comment" key={comment._id}>
+      <span className="commentUserName">
+        {comment.userName}
+        <span className="commentDate">{formattedDate}</span>
+      </span>
+      {isEditing ? (
+        <input
+          comment-id={comment._id}
+          className="addComment"
+          placeholder="Edit Comment..."
+          defaultValue={comment.content}
+          onKeyPress={handleEditComment}
+        />
+      ) : (
+        <span className="commentText">{comment.content}</span>
+      )}
+      {canModify && (
+        <img
+          alt="edit"
+          src={edit_icon}
+          className="editButton"
+          onClick={() => setEditing(true)}
+        />
+      )}
+      {canModify && (
+        <img
+          alt="delete"
+          src={delete_icon}
+          className="deleteButton"
+          comment-id={comment._id}
+          onClick={handleDeleteComment}
+        />
+      )}
     </div>
   );
 };

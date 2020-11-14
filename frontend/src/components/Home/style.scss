@@ -30,6 +30,7 @@
   background: rgba(255, 255, 255, 0.9);
   border-radius: 8px;
   padding: 8px;
+  position: relative;
 }
 
 .postUserName {
@@ -60,6 +61,7 @@
   background-color: rgba(0, 0, 0, 0.075);
   border-radius: 8px;
   padding: 8px;
+  position: relative;
 }
 
 .comments {
@@ -125,5 +127,22 @@
   padding: 12px;
   font-weight: bold;
   outline: none;
+  cursor: pointer;
+}
+
+.editButton {
+  position: absolute;
+  top: 8px;
+  right: 40px;
+  width: 24px;
+  cursor: pointer;
+}
+
+.deleteButton {
+  width: 32px;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
   cursor: pointer;
 }
