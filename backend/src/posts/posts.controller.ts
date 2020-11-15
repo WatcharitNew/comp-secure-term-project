@@ -5,14 +5,13 @@ import {
   Get,
   Param,
   Post,
-  Put,
-  UseGuards,
+
+  UseGuards
 } from '@nestjs/common';
-import { PostsService } from './posts.service';
-import { CreatePostDto, UpdatePostDto } from './posts.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { PostGuard } from 'src/guard/post.guard';
-import { LoadUser } from 'src/decorator/user.decorator';
+import { CreatePostDto, UpdatePostDto } from './posts.dto';
+import { PostsService } from './posts.service';
 
 @Controller('posts')
 export class PostsController {
@@ -45,10 +44,10 @@ export class PostsController {
     return await this.postsService.delete(postId);
   }
 
-  @UseGuards(AuthGuard(), PostGuard)
-  @Put('test')
-  async test(@LoadUser() user) {
-    console.log('success', user);
-    return true;
-  }
+  // @UseGuards(AuthGuard(), PostGuard)
+  // @Put('test')
+  // async test(@LoadUser() user) {
+  //   console.log('success', user);
+  //   return true;
+  // }
 }
