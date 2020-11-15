@@ -57,7 +57,6 @@ const HomeComponent = () => {
     if (event.key === "Enter" && event.target.value !== "") {
       axios
         .post(`${ENDPOINT}/comments`, {
-          userId,
           content: event.target.value,
           postId: event.target.getAttribute("post-id"),
         })
@@ -68,7 +67,7 @@ const HomeComponent = () => {
   const handleAddPost = (event) => {
     if (event.key === "Enter" && event.target.value !== "") {
       axios
-        .post(`${ENDPOINT}/posts`, { userId, content: event.target.value })
+        .post(`${ENDPOINT}/posts`, { content: event.target.value })
         .then(window.location.reload(false));
     }
   };

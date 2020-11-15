@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreatePostDto, UpdatePostDto } from './posts.dto';
+import { CreatePostDto, PostDto } from './posts.dto';
 import { Post } from '../schemas/post.schema';
 import { Comment } from '../schemas/comment.schema';
 import { UsersService } from 'src/users/users.service';
@@ -40,7 +40,7 @@ export class PostsService {
     return { _id: createdPost._id };
   }
 
-  async update(postId: string, updatePostDto: UpdatePostDto): Promise<any> {
+  async update(postId: string, updatePostDto: PostDto): Promise<any> {
     const { content } = updatePostDto;
     return await this.postModel.findOneAndUpdate(
       { _id: postId },

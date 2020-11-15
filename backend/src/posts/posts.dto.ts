@@ -3,6 +3,6 @@ export class CreatePostDto {
   readonly userId: string;
 }
 
-export class UpdatePostDto {
+export class PostDto {
   readonly content: string;
 }
