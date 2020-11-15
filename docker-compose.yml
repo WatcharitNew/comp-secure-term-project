@@ -16,13 +16,12 @@ services:
       - db-data:/data/db
   backend:
     build: ./backend
+    command: yarn start:dev
     container_name: backend
     ports:
       - 8080:8080
     volumes:
-      - ./backend/src:/home/node/app/src
-    env_file:
-      - ./backend/.env
+      - ./backend/src:/home/node/src
 
   # will include all services later
 

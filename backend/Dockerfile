@@ -1,5 +1,7 @@
 FROM node:14-slim
 
+RUN apt update && apt install -y procps
+
 USER node
 
 ARG PORT=8080
