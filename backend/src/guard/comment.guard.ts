@@ -14,7 +14,7 @@ export class CommentGuard implements CanActivate {
     const isAdmin = await this.userService.isAdmin(reqUserId);
     if (isAdmin) return true;
 
-    const commentId = request.body.commentId;
+    const commentId = request.params.commentId;
     const userId = await this.commentsService.getCommentUserIdByCommentId(
       commentId,
     );
