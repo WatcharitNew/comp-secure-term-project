@@ -19,7 +19,7 @@ export class Comment extends Document {
   postId: string;
 
   @Prop()
-  userName: string;
+  displayName: string;
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);

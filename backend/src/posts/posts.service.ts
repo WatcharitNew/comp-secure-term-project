@@ -17,7 +17,7 @@ export class PostsService {
   async get(): Promise<any[]> {
     return await this.postModel.find(
       {},
-      ['_id', 'content', 'userName', 'userId', 'createdTime'],
+      ['_id', 'content', 'displayName', 'userId', 'createdTime'],
       {
         sort: {
           createdTime: -1,
@@ -33,7 +33,7 @@ export class PostsService {
       userId,
       createdTime: new Date(),
       updatedTime: new Date(),
-      userName: await this.userService.getUserNameByUserId(userId),
+      displayName: await this.userService.getDisplayNameByUserId(userId),
     };
     const createdPost = new this.postModel(postToCreate);
     createdPost.save();

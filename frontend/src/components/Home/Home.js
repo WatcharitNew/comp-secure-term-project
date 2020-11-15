@@ -172,8 +172,8 @@ const PostComponent = (props) => {
   };
   return (
     <div className="post">
-      <span className="postUserName">
-        {post.userName}
+      <span className="postDisplayName">
+        {post.displayName}
         <span className="postTime">{formattedDate}</span>
       </span>
       {isEditing ? (
@@ -231,8 +231,8 @@ const CommentComponent = (props) => {
   };
   return (
     <div className="comment" key={comment._id}>
-      <span className="commentUserName">
-        {comment.userName}
+      <span className="commentDisplayName">
+        {comment.displayName}
         <span className="commentDate">{formattedDate}</span>
       </span>
       {isEditing ? (

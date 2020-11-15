@@ -15,7 +15,7 @@ export class CommentsService {
   async get(): Promise<Comment[]> {
     return await this.commentModel.find(
       {},
-      ['_id', 'content', 'userName', 'userId', 'createdTime', 'postId'],
+      ['_id', 'content', 'displayName', 'userId', 'createdTime', 'postId'],
       {
         sort: {
           createdTime: 1,
@@ -32,7 +32,7 @@ export class CommentsService {
       postId,
       createdTime: new Date(),
       updatedTime: new Date(),
-      userName: await this.userService.getUserNameByUserId(userId),
+      displayName: await this.userService.getDisplayNameByUserId(userId),
     };
     const createdComment = new this.commentModel(commentToCreate);
     createdComment.save();
