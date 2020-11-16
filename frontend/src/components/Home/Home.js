@@ -6,34 +6,34 @@ import edit_icon from "../../img/edit.png";
 import delete_icon from "../../img/delete.png";
 
 const ENDPOINT = process.env.REACT_APP_BACKEND;
+const api = axios.create(
+  {
+    withCredentials: true,
+  }
+);
 
 const HomeComponent = () => {
   const [posts, setPosts] = useState([]);
   const isAdmin = sessionStorage.getItem("isAdmin");
   const userId = sessionStorage.getItem("_id");
 
-  axios.defaults.headers.common["Authorization"] =
-    "Bearer " + sessionStorage.getItem("access_token");
   useEffect(() => {
     let posts, comments;
     const fetchData = async () => {
-      const posts_res = await axios.get(`${ENDPOINT}/posts`);
+      const posts_res = await api
+        .get(`${ENDPOINT}/posts`)
+        .catch(error => {
+          if (error.response.status === 401) { // May be access token expired
+            history.push("/login");
+            history.go(0);
+          }
+        });
       if (posts_res.status === 200) {
         posts = posts_res.data;
-      } else {
-        console.log(
-          `Error: ${ENDPOINT}/posts return status ${posts_res.status}`
-        );
-        return;
       }
-      const comments_res = await axios.get(`${ENDPOINT}/comments`);
+      const comments_res = await api.get(`${ENDPOINT}/comments`);
       if (comments_res.status === 200) {
         comments = comments_res.data;
-      } else {
-        console.log(
-          `Error: ${ENDPOINT}/posts return status ${comments_res.status}`
-        );
-        return;
       }
     };
     fetchData().then(() => {
@@ -55,7 +55,7 @@ const HomeComponent = () => {
 
   const handleAddComment = (event) => {
     if (event.key === "Enter" && event.target.value !== "") {
-      axios
+      api
         .post(`${ENDPOINT}/comments`, {
           userId,
           content: event.target.value,
@@ -67,7 +67,7 @@ const HomeComponent = () => {
 
   const handleAddPost = (event) => {
     if (event.key === "Enter" && event.target.value !== "") {
-      axios
+      api
         .post(`${ENDPOINT}/posts`, { userId, content: event.target.value })
         .then(window.location.reload(false));
     }
@@ -126,7 +126,6 @@ const HomeComponent = () => {
   const handleLogOut = () => {
     sessionStorage.removeItem("_id");
     sessionStorage.removeItem("displayName");
-    sessionStorage.removeItem("access_token");
     history.push("/login");
     history.go(0);
   };
@@ -158,7 +157,7 @@ const PostComponent = (props) => {
   const { post, formattedDate, commentsComponent, canModify } = props;
   const handleEditPost = (event) => {
     if (event.key === "Enter" && event.target.value !== "") {
-      axios
+      api
         .post(`${ENDPOINT}/posts/${event.target.getAttribute("post-id")}`, {
           content: event.target.value,
         })
@@ -166,7 +165,7 @@ const PostComponent = (props) => {
     }
   };
   const handleDeletePost = (event) => {
-    axios
+    api
       .delete(`${ENDPOINT}/posts/${event.target.getAttribute("post-id")}`)
       .then(window.location.reload(false));
   };
@@ -214,7 +213,7 @@ const CommentComponent = (props) => {
   const { comment, formattedDate, canModify } = props;
   const handleEditComment = (event) => {
     if (event.key === "Enter" && event.target.value !== "") {
-      axios
+      api
         .post(
           `${ENDPOINT}/comments/${event.target.getAttribute("comment-id")}`,
           {
@@ -225,7 +224,7 @@ const CommentComponent = (props) => {
     }
   };
   const handleDeleteComment = (event) => {
-    axios
+    api
       .delete(`${ENDPOINT}/comments/${event.target.getAttribute("comment-id")}`)
       .then(window.location.reload(false));
   };

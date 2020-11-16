@@ -47,7 +47,6 @@ export class UsersService {
 
   async getUserByUsername(userName: string) {
     const user = await this.userModel.findOne({ userName }).exec();
-    if(!user) throw new BadRequestException('Not found any User');
     return user;
   }
 

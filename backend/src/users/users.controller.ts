@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Response } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './users.dto';
 
@@ -7,8 +7,19 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
-    return await this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto, @Response() res) {
+    const result:any = await this.usersService.create(createUserDto);
+    if(!result._id) {
+      res.status(400);
+      return res.send(result);
+    }
+    const {_id, displayName, access_token} = result;
+    res.cookie('Authentication', access_token, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 365,
+    });
+    res.status(201);
+    return res.send({_id, displayName});
   }
 
   /*

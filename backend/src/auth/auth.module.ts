@@ -21,6 +21,7 @@ import { LocalStrategy } from './local.strategy';
                     publicKey: process.env.JWT_PUBLIC_KEY,
                     signOptions: {
                         algorithm: 'RS256',
+                        expiresIn: '1800s',
                     }
                 };
                 return options;

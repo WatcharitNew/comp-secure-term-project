@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards} from '@nestjs/common';
+import { Controller, Post, UseGuards, Response} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { LoadUser } from 'src/decorator/user.decorator';
@@ -9,7 +9,13 @@ export class AuthController {
 
   @UseGuards(AuthGuard('local'))
   @Post('login')
-  async login(@LoadUser() user) {
-    return await this.authService.login(user);
+  async login(@LoadUser() user, @Response() res) {
+    const { access_token, _id, displayName, isAdmin} =  await this.authService.login(user);
+    res.cookie('Authentication', access_token, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 365,
+    });
+    res.status(201);
+    return res.send({_id, displayName, isAdmin});
   }
 }

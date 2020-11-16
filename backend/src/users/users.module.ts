@@ -21,6 +21,7 @@ import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
             publicKey: process.env.JWT_PUBLIC_KEY,
             signOptions: {
                 algorithm: 'RS256',
+                expiresIn: '1800s',
             }
         };
         return options;
