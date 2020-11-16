@@ -8,4 +8,5 @@ export class CreateUserDto {
 export class HasUserDto {
   readonly hasUserName: boolean;
   readonly hasDisplayName: boolean;
+  invalidLength?: boolean;
 }

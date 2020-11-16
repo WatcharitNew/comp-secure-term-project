@@ -24,15 +24,35 @@ const AuthComponent = (props) => {
       else if(confirmPassword !== password) {
         setShowErr(true);
         setErrorMsg('Confirm password is incorrect');
-      } else {
+      } 
+      else if(userName.length < 4) {
+        setShowErr(true);
+        setErrorMsg('Username must >= 4 characters');
+      }
+      else if(displayName.length < 1) {
+        setShowErr(true);
+        setErrorMsg('Display name must >= 1 characters');
+      }
+      else {
       const body = {
         userName,
         password,
         displayName,
       };
-      await axios.post(`${ENDPOINT}/users`, body).then((res) => {
+      await axios.post(`${ENDPOINT}/users`, body, {withCredentials: true}).then((res) => {
         if(res.status === 201) {
-          const {hasUserName, hasDisplayName} = res.data;
+          const {_id, displayName} = res.data;
+          console.log('register success!');
+          sessionStorage.setItem("_id", _id);
+          sessionStorage.setItem("displayName", displayName);
+          sessionStorage.setItem("isAdmin", false);
+          history.push('/home');
+          history.go(0);
+        }
+      })
+      .catch(error => {
+        if (error.response.status === 400) {
+          const {hasUserName, hasDisplayName} = error.response.data;
           if(hasDisplayName) {
             setShowErr(true);
             setErrorMsg('This display name has alreay been taken');
@@ -40,37 +60,28 @@ const AuthComponent = (props) => {
           else if(hasUserName) {
             setShowErr(true);
             setErrorMsg('This username has alreay been taken');
-          } 
-          else {
-          const {_id, displayName, access_token} = res.data;
-          console.log('register success!');
-          sessionStorage.setItem("_id", _id);
-          sessionStorage.setItem("displayName", displayName);
-          sessionStorage.setItem("access_token", access_token);
-          sessionStorage.setItem("isAdmin", false);
-          history.push('/home');
-          history.go(0);}
+          }
         }
-      });}
+      })}
     } else {
       const body = {
         username: userName,
         password,
       };
-      await axios.post(`${ENDPOINT}/auth/login`, body).then((res) => {
+      await axios.post(`${ENDPOINT}/auth/login`, body, {withCredentials: true}).then((res) => {
         if(res.status===201) {
-          const {_id, displayName, access_token, isAdmin} = res.data;
-          if(_id === null) {
-            setShowErr(true);
-            setErrorMsg('Username or password is incorrect');
-          } else {
-            sessionStorage.setItem("access_token", access_token);
-            sessionStorage.setItem("_id", _id);
-            sessionStorage.setItem("displayName", displayName);
-            sessionStorage.setItem("isAdmin", isAdmin);
-            history.push('/home');
-            history.go(0);
-          }
+          const {_id, displayName, isAdmin} = res.data;
+          sessionStorage.setItem("_id", _id);
+          sessionStorage.setItem("displayName", displayName);
+          sessionStorage.setItem("isAdmin", isAdmin);
+          history.push('/home');
+          history.go(0);
+        }
+      })
+      .catch(error => {
+        if(error.response.status === 401) {
+          setShowErr(true);
+          setErrorMsg('Username or password is incorrect');
         }
       })
     }

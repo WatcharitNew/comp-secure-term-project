@@ -31,9 +31,16 @@ export class UsersService {
   ): Promise<
     { _id: string; displayName: string; access_token: string } | HasUserDto
   > {
-    const { userName, displayName } = createUserDto;
+    const { userName, displayName, password } = createUserDto;
+
     const result = await this.hasUser(userName, displayName);
-    if (result.hasDisplayName || result.hasUserName) {
+    if(userName.length<4 || displayName.length<1 || password.length<8) {
+      result.invalidLength = true;
+    }
+    if(userName.length>20 || displayName.length>30 || password.length>30) {
+      result.invalidLength = true;
+    }
+    if (result.hasDisplayName || result.hasUserName || result.invalidLength) {
       return result;
     }
     const hashedPass = await bcrypt.hash(createUserDto.password, 10);
@@ -52,7 +59,6 @@ export class UsersService {
 
   async getUserByUsername(userName: string) {
     const user = await this.userModel.findOne({ userName }).exec();
-    if (!user) throw new BadRequestException('Not found any User');
     return user;
   }
 
