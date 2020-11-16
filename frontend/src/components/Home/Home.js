@@ -57,7 +57,6 @@ const HomeComponent = () => {
     if (event.key === "Enter" && event.target.value !== "") {
       api
         .post(`${ENDPOINT}/comments`, {
-          userId,
           content: event.target.value,
           postId: event.target.getAttribute("post-id"),
         })
@@ -67,8 +66,8 @@ const HomeComponent = () => {
 
   const handleAddPost = (event) => {
     if (event.key === "Enter" && event.target.value !== "") {
-      api
-        .post(`${ENDPOINT}/posts`, { userId, content: event.target.value })
+      axios
+        .post(`${ENDPOINT}/posts`, { content: event.target.value })
         .then(window.location.reload(false));
     }
   };
@@ -171,8 +170,8 @@ const PostComponent = (props) => {
   };
   return (
     <div className="post">
-      <span className="postUserName">
-        {post.userName}
+      <span className="postDisplayName">
+        {post.displayName}
         <span className="postTime">{formattedDate}</span>
       </span>
       {isEditing ? (
@@ -230,8 +229,8 @@ const CommentComponent = (props) => {
   };
   return (
     <div className="comment" key={comment._id}>
-      <span className="commentUserName">
-        {comment.userName}
+      <span className="commentDisplayName">
+        {comment.displayName}
         <span className="commentDate">{formattedDate}</span>
       </span>
       {isEditing ? (

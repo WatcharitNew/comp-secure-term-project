@@ -5,13 +5,13 @@ import {
   Get,
   Param,
   Post,
-
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PostGuard } from 'src/guard/post.guard';
-import { CreatePostDto, UpdatePostDto } from './posts.dto';
+import { CreatePostDto, PostDto } from './posts.dto';
 import { PostsService } from './posts.service';
+import { LoadUser } from 'src/decorator/user.decorator';
 
 @Controller('posts')
 export class PostsController {
@@ -25,7 +25,11 @@ export class PostsController {
 
   @UseGuards(AuthGuard())
   @Post()
-  async create(@Body() createPostDto: CreatePostDto) {
+  async create(@Body() postDto: PostDto, @LoadUser() user) {
+    const createPostDto: CreatePostDto = {
+      content: postDto.content,
+      userId: user.userId,
+    };
     return await this.postsService.create(createPostDto);
   }
 
@@ -33,7 +37,7 @@ export class PostsController {
   @Post(':postId')
   async update(
     @Param('postId') postId: string,
-    @Body() updatePostDto: UpdatePostDto,
+    @Body() updatePostDto: PostDto,
   ) {
     return await this.postsService.update(postId, updatePostDto);
   }

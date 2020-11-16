@@ -7,3 +7,8 @@ export class CreateCommentDto {
 export class UpdateCommentDto {
   readonly content: string;
 }
+
+export class CommentDto {
+  readonly content: string;
+  readonly postId: string;
+}

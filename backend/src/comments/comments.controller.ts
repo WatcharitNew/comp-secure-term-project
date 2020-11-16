@@ -8,9 +8,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
-import { CreateCommentDto, UpdateCommentDto } from './comments.dto';
+import { CreateCommentDto, UpdateCommentDto, CommentDto } from './comments.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { CommentGuard } from 'src/guard/comment.guard';
+import { LoadUser } from 'src/decorator/user.decorator';
 
 @Controller('comments')
 export class CommentsController {
@@ -24,7 +25,12 @@ export class CommentsController {
 
   @UseGuards(AuthGuard())
   @Post()
-  async create(@Body() createCommentDto: CreateCommentDto) {
+  async create(@Body() commentDto: CommentDto, @LoadUser() user) {
+    const createCommentDto: CreateCommentDto = {
+      content: commentDto.content,
+      userId: user.userId,
+      postId: commentDto.postId,
+    };
     return await this.commentsService.create(createCommentDto);
   }
 
