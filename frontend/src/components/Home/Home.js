@@ -6,27 +6,24 @@ import edit_icon from "../../img/edit.png";
 import delete_icon from "../../img/delete.png";
 
 const ENDPOINT = process.env.REACT_APP_BACKEND;
-const api = axios.create(
-  {
-    withCredentials: true,
-  }
-);
+const api = axios.create({
+  withCredentials: true,
+});
 
 const HomeComponent = () => {
   const [posts, setPosts] = useState([]);
   const isAdmin = sessionStorage.getItem("isAdmin");
-  const userId = sessionStorage.getItem("_id");
+  const displayName = sessionStorage.getItem("displayName");
 
   useEffect(() => {
     let posts, comments;
     const fetchData = async () => {
-      const posts_res = await api
-        .get(`${ENDPOINT}/posts`)
-        .catch(error => {
-          if (error.response.status === 401) { // May be access token expired
-            handleLogOut();
-          }
-        });
+      const posts_res = await api.get(`${ENDPOINT}/posts`).catch((error) => {
+        if (error.response.status === 401) {
+          // May be access token expired
+          handleLogOut();
+        }
+      });
       if (posts_res.status === 200) {
         posts = posts_res.data;
       }
@@ -93,7 +90,7 @@ const HomeComponent = () => {
           key={comment._id}
           comment={comment}
           formattedDate={formattedDate}
-          canModify={isAdmin === "true" || comment.userId === userId}
+          canModify={isAdmin === "true" || comment.displayName === displayName}
         />
       );
     });
@@ -113,16 +110,13 @@ const HomeComponent = () => {
         post={post}
         formattedDate={formattedDate}
         commentsComponent={commentsComponent}
-        canModify={isAdmin === "true" || post.userId === userId}
+        canModify={isAdmin === "true" || post.displayName === displayName}
       />
     );
   });
 
-  const displayName = sessionStorage.getItem("displayName");
-
   const history = useHistory();
   const handleLogOut = () => {
-    sessionStorage.removeItem("_id");
     sessionStorage.removeItem("displayName");
     history.push("/login");
     history.go(0);
