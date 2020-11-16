@@ -24,8 +24,7 @@ const HomeComponent = () => {
         .get(`${ENDPOINT}/posts`)
         .catch(error => {
           if (error.response.status === 401) { // May be access token expired
-            history.push("/login");
-            history.go(0);
+            handleLogOut();
           }
         });
       if (posts_res.status === 200) {
@@ -66,7 +65,7 @@ const HomeComponent = () => {
 
   const handleAddPost = (event) => {
     if (event.key === "Enter" && event.target.value !== "") {
-      axios
+      api
         .post(`${ENDPOINT}/posts`, { content: event.target.value })
         .then(window.location.reload(false));
     }

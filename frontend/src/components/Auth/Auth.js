@@ -24,7 +24,16 @@ const AuthComponent = (props) => {
       else if(confirmPassword !== password) {
         setShowErr(true);
         setErrorMsg('Confirm password is incorrect');
-      } else {
+      } 
+      else if(userName.length < 4) {
+        setShowErr(true);
+        setErrorMsg('Username must >= 4 characters');
+      }
+      else if(displayName.length < 1) {
+        setShowErr(true);
+        setErrorMsg('Display name must >= 1 characters');
+      }
+      else {
       const body = {
         userName,
         password,
@@ -62,16 +71,17 @@ const AuthComponent = (props) => {
       await axios.post(`${ENDPOINT}/auth/login`, body, {withCredentials: true}).then((res) => {
         if(res.status===201) {
           const {_id, displayName, isAdmin} = res.data;
-          if(_id === null) {
-            setShowErr(true);
-            setErrorMsg('Username or password is incorrect');
-          } else {
-            sessionStorage.setItem("_id", _id);
-            sessionStorage.setItem("displayName", displayName);
-            sessionStorage.setItem("isAdmin", isAdmin);
-            history.push('/home');
-            history.go(0);
-          }
+          sessionStorage.setItem("_id", _id);
+          sessionStorage.setItem("displayName", displayName);
+          sessionStorage.setItem("isAdmin", isAdmin);
+          history.push('/home');
+          history.go(0);
+        }
+      })
+      .catch(error => {
+        if(error.response.status === 401) {
+          setShowErr(true);
+          setErrorMsg('Username or password is incorrect');
         }
       })
     }
