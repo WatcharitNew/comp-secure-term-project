@@ -22,6 +22,15 @@ services:
       - 8090:8090
     volumes:
       - ./backend/src:/home/node/src
+  frontend:
+    build: ./frontend
+    command: yarn start
+    container_name: frontend
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend/src:/home/node/src
+    stdin_open: true
   nginx:
     build: ./nginx
     container_name: nginx
