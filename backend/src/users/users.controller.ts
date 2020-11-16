@@ -9,17 +9,17 @@ export class UsersController {
   @Post()
   async create(@Body() createUserDto: CreateUserDto, @Response() res) {
     const result:any = await this.usersService.create(createUserDto);
-    if(!result._id) {
+    if(!result.displayName) {
       res.status(400);
       return res.send(result);
     }
-    const {_id, displayName, access_token} = result;
+    const {displayName, access_token} = result;
     res.cookie('Authentication', access_token, {
       httpOnly: true,
       maxAge: 1000 * 60 * 30,
     });
     res.status(201);
-    return res.send({_id, displayName});
+    return res.send({displayName});
   }
 
   /*

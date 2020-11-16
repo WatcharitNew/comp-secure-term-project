@@ -2,9 +2,9 @@ import React from "react";
 import Redirect from "./Redirect";
 
 function AuthGaurd({ children }) {
-  const _id = sessionStorage.getItem("_id");
+  const displayName = sessionStorage.getItem("displayName");
 
-  if (!_id) {
+  if (!displayName) {
     return <Redirect to="/login" />;
   }
 

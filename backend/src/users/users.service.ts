@@ -29,7 +29,7 @@ export class UsersService {
   async create(
     createUserDto: CreateUserDto,
   ): Promise<
-    { _id: string; displayName: string; access_token: string } | HasUserDto
+    {displayName: string; access_token: string } | HasUserDto
   > {
     const { userName, displayName, password } = createUserDto;
 
@@ -54,7 +54,7 @@ export class UsersService {
       algorithm: 'RS256',
       secret: process.env.JWT_PRIVATE_KEY,
     });
-    return { _id: createdUser._id, displayName, access_token };
+    return { displayName, access_token };
   }
 
   async getUserByUsername(userName: string) {

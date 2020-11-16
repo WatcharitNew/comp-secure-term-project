@@ -41,9 +41,8 @@ const AuthComponent = (props) => {
       };
       await axios.post(`${ENDPOINT}/users`, body, {withCredentials: true}).then((res) => {
         if(res.status === 201) {
-          const {_id, displayName} = res.data;
+          const {displayName} = res.data;
           console.log('register success!');
-          sessionStorage.setItem("_id", _id);
           sessionStorage.setItem("displayName", displayName);
           sessionStorage.setItem("isAdmin", false);
           history.push('/home');
@@ -70,8 +69,7 @@ const AuthComponent = (props) => {
       };
       await axios.post(`${ENDPOINT}/auth/login`, body, {withCredentials: true}).then((res) => {
         if(res.status===201) {
-          const {_id, displayName, isAdmin} = res.data;
-          sessionStorage.setItem("_id", _id);
+          const {displayName, isAdmin} = res.data;
           sessionStorage.setItem("displayName", displayName);
           sessionStorage.setItem("isAdmin", isAdmin);
           history.push('/home');

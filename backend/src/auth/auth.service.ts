@@ -27,7 +27,6 @@ export class AuthService {
         const access_token = this.jwtService.sign(payload, {algorithm: 'RS256', secret: process.env.JWT_PRIVATE_KEY});
         return {
             access_token: access_token,
-            _id: user._id,
             displayName: user.displayName,
             isAdmin: await this.userService.isAdmin(user._id),
         }
