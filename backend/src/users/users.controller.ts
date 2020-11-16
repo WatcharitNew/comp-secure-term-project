@@ -16,7 +16,7 @@ export class UsersController {
     const {_id, displayName, access_token} = result;
     res.cookie('Authentication', access_token, {
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 365,
+      maxAge: 1000 * 60 * 30,
     });
     res.status(201);
     return res.send({_id, displayName});

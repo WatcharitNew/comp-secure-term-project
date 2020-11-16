@@ -13,7 +13,7 @@ export class AuthController {
     const { access_token, _id, displayName, isAdmin} =  await this.authService.login(user);
     res.cookie('Authentication', access_token, {
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 365,
+      maxAge: 1000 * 60 * 30,
     });
     res.status(201);
     return res.send({_id, displayName, isAdmin});
