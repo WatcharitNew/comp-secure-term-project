@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+  database:
+    image: "mongo:4.4"
+    container_name: database
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: comp-secure-term-project
+    ports:
+      - 27017-27019:27017-27019
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - db-data:/data/db
+  backend:
+    build: ./backend
+    command: yarn start:dev
+    container_name: backend
+    depends_on:
+      - database
+    ports:
+      - 8090:8090
+    volumes:
+      - ./backend/src:/home/node/src
+  frontend:
+    build: ./frontend
+    command: yarn start
+    container_name: frontend
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend/src:/home/node/src
+    stdin_open: true
+    environment:
+      REACT_APP_BACKEND: http://localhost:8080/api
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - 8080:8080
+    depends_on:
+      - frontend
+      - backend
+
+  # will include all services later
+
+volumes:
+  db-data:
